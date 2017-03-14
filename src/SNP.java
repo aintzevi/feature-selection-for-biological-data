@@ -11,9 +11,9 @@ public class SNP {
     // Unique id
     private int SNPid;
     // Rank of SNP for a specific ranking system
-    private List<Integer> SNPRank;
+    private List<Double> SNPRank;
     // Grade of the SNP (in case we use grading to aggregate, rather than just ranking)
-    private List<Float> SNPGrading;
+    private List<Double> SNPGrading;
     /*
     NOTED: Respective SNPRank and SNPGrading index refer to the results of one ranking system
     (index:0 (both lists) -> first ranking system, index:1 (both lists) -> second ranking system, etc.)
@@ -25,17 +25,11 @@ public class SNP {
      * @param SNPRank List of the rank this SNP has in different ranking systems
      * @param SNPGrading List of the grading this SNP has in different ranking systems
      */
-    public SNP(int SNPid, List<Integer> SNPRank, List<Float> SNPGrading) {
+    public SNP(int SNPid, List<Double> SNPRank, List<Double> SNPGrading) {
         this.SNPid = SNPid;
         this.SNPRank = SNPRank;
         this.SNPGrading = SNPGrading;
     }
-
-/*    public SNP(int SNPid, int SNPRank, float SNPGrading) {
-        this.SNPid = SNPid;
-        this.SNPRank = new ArrayList<>();
-        this.SNPGrading = new ArrayList<>();
-    }*/
 
     // Getters and setters
 
@@ -49,7 +43,7 @@ public class SNP {
 
     /**
      * Sets the SNPid value
-     * @param SNPid should be a unique, non-negative, integer value
+     * @param SNPid should be a unique, non-negative, double value
      */
     public void setSNPid(int SNPid) {
         this.SNPid = SNPid;
@@ -59,15 +53,15 @@ public class SNP {
      * SNPRank list contains the ranking of this SNP for several ranking systems
      * @return SNPRank list
      */
-    public List<Integer> getSNPRank() {
+    public List<Double> getSNPRank() {
         return SNPRank;
     }
 
     /**
      *
-     * @param SNPRank List containing positive integer values
+     * @param SNPRank List containing positive double values
      */
-    public void setSNPRank(List<Integer> SNPRank) {
+    public void setSNPRank(List<Double> SNPRank) {
         this.SNPRank = SNPRank;
     }
 
@@ -75,15 +69,15 @@ public class SNP {
      * SNPGrading list contains the grading of this SNP for several ranking systems - indices respective to the SNPRank list
      * @return SNPGrading list
      */
-    public List<Float> getSNPGrading() {
+    public List<Double> getSNPGrading() {
         return SNPGrading;
     }
 
     /**
      *
-     * @param SNPGrading List containing float values
+     * @param SNPGrading List containing double values
      */
-    public void setSNPGrading(List<Float> SNPGrading) {
+    public void setSNPGrading(List<Double> SNPGrading) {
         this.SNPGrading = SNPGrading;
     }
 
@@ -94,7 +88,7 @@ public class SNP {
      * @param index position of the new ranking in the list
      * @param rank SNP rank to be added to the list of rankings
      */
-    public void addRank (int index, int rank) {
+    public void addRank (int index, Double rank) {
         this.getSNPRank().add(index, rank);
     }
 
@@ -103,7 +97,7 @@ public class SNP {
      * @param index position of the new grading in the list
      * @param grading SNP grading to be added to the list of gradings
      */
-    public void addGrading (int index, float grading) {
+    public void addGrading (int index, Double grading) {
         this.getSNPGrading().add(index, grading);
     }
 
