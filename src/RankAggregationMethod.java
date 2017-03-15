@@ -7,16 +7,18 @@ import java.util.List;
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
 public class RankAggregationMethod {
-    // TODO Consider making it more expandable (number of rankings)
 
     private List<SNP> SNPList;
+    private int numberOfPrimaryRankings;
 
     public RankAggregationMethod() {
         this.SNPList = new ArrayList<>();
+        numberOfPrimaryRankings = 3;
     }
 
-    public RankAggregationMethod(List<SNP> SNPList) {
+    public RankAggregationMethod(List<SNP> SNPList, int numberOfPrimaryRankings) {
         this.SNPList = SNPList;
+        this.numberOfPrimaryRankings = numberOfPrimaryRankings;
     }
 
     // Borda Methods
@@ -32,18 +34,25 @@ public class RankAggregationMethod {
         Double median;
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
-            // Copy its list of rankings to a temporary list - Copies only 3 first rankings (genetic rankings)
-            tempList = new ArrayList<>(currentSNP.getSNPRank().subList(0, 3));
+            // Copy its list of rankings to a temporary list - Copies only first rankings (genetic rankings)
+            tempList = new ArrayList<>(currentSNP.getSNPRank().subList(0, numberOfPrimaryRankings));
 
             // Sort list, lower to higher
             Collections.sort(tempList);
 
-            // Choose median - is at index 1 from (0 1 2) in this implementation
-            median = tempList.get(1);
-            //TODO If expandable - odd or even number of elements
+            // Choose median
+            // If the number of rankings is even
+            if (numberOfPrimaryRankings %2 == 0) {
+                // The median is the average value of the two central values
+                median = (tempList.get(numberOfPrimaryRankings - 1) + tempList.get(numberOfPrimaryRankings))/2.0;
+            }
+            else { // If the number of rankings is odd
+                // median is the central value of the list, whose index is the floor of the numberOfPrimaryRankings/2 value
+                median = tempList.get(numberOfPrimaryRankings /2);
+            }
 
-            // Add the median to the SNP's rank list, index 3
-            currentSNP.addRank(3, median);
+            // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings + 1)
+            currentSNP.addRank(numberOfPrimaryRankings + 1, median);
         } // end for - list of SNPs
     }
 
@@ -58,8 +67,8 @@ public class RankAggregationMethod {
 
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
-            // Read first 3 rankings
-            for (int i = 0 ; i <= 2 ; ++i) {
+            // Read primary rankings
+            for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
                 // Calculate the rankings product
                 rankProduct *= currentSNP.getSNPRank().get(i);
             }
@@ -67,10 +76,10 @@ public class RankAggregationMethod {
             // Calculate geometric mean
 
             // Geometric mean formula: value = L-root of product of L numbers
-            geometricMean = Math.pow(rankProduct, 1/3);
+            geometricMean = Math.pow(rankProduct, 1/numberOfPrimaryRankings);
 
-            // Add geometric mean to the SNP's rank list, index 4
-            currentSNP.getSNPRank().add(4, geometricMean);
+            // Add geometric mean to the SNP's rank list, index next to the first aggregated rankink (numberOfPrimaryRankings + 2)
+            currentSNP.getSNPRank().add(numberOfPrimaryRankings + 2, geometricMean);
 
         } // end for - list of SNPs
     }
@@ -85,8 +94,8 @@ public class RankAggregationMethod {
 
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
-            // Read first 3 rankings
-            for (int i = 0 ; i <= 2 ; ++i) {
+            // Read primary rankings
+            for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
                 // Calculate the sum of (rankings power of p)
                 sum += Math.pow(currentSNP.getSNPRank().get(i), p);
             }
@@ -94,11 +103,10 @@ public class RankAggregationMethod {
             // Calculate p-norm
 
             // p-norm formula (Lin, 2010): value = sum of (rankings power of p) divided by number of rankings
-            // TODO Make number of rankings variable -- to be checked
-            pNorm = sum/3;
+            pNorm = sum/numberOfPrimaryRankings;
 
-            // Add p-norm to the SNP's rank list, index 5
-            currentSNP.getSNPRank().add(5, pNorm);
+            // Add p-norm to the SNP's rank list, index (numberOfPrimaryRankings + 3)
+            currentSNP.getSNPRank().add(numberOfPrimaryRankings + 3, pNorm);
 
         } // end for - list of SNPs
     }
