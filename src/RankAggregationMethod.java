@@ -7,6 +7,8 @@ import java.util.List;
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
 public class RankAggregationMethod {
+    // TODO Consider making it more expandable (number of rankings)
+
     private List<SNP> SNPList;
 
     public RankAggregationMethod() {
@@ -65,7 +67,6 @@ public class RankAggregationMethod {
             // Calculate geometric mean
 
             // Geometric mean formula: value = L-root of product of L numbers
-            // TODO unset number of rankings
             geometricMean = Math.pow(rankProduct, 1/3);
 
             // Add geometric mean to the SNP's rank list, index 4
@@ -74,7 +75,31 @@ public class RankAggregationMethod {
         } // end for - list of SNPs
     }
 
-    public void pNormRank() {
+    /**
+     * Aggregates SNP rankings using the p-norm formula (Lin, 2010) to calculate the aggregated rank
+     * @param p power to which every ranking will be raised to. Double value. p = 1 turns this method to the arithmetic mean
+     */
+    public void pNormRank(Double p) {
+        double sum = 0.0;
+        double pNorm;
 
+        // For every SNP in the input list
+        for (SNP currentSNP : SNPList) {
+            // Read first 3 rankings
+            for (int i = 0 ; i <= 2 ; ++i) {
+                // Calculate the sum of (rankings power of p)
+                sum += Math.pow(currentSNP.getSNPRank().get(i), p);
+            }
+
+            // Calculate p-norm
+
+            // p-norm formula (Lin, 2010): value = sum of (rankings power of p) divided by number of rankings
+            // TODO Make number of rankings variable -- to be checked
+            pNorm = sum/3;
+
+            // Add p-norm to the SNP's rank list, index 5
+            currentSNP.getSNPRank().add(5, pNorm);
+
+        } // end for - list of SNPs
     }
 }
