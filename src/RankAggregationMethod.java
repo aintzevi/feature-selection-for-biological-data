@@ -110,4 +110,45 @@ public class RankAggregationMethod {
 
         } // end for - list of SNPs
     }
+
+    public void MC1() {
+        int tableSize = SNPList.size();
+        // Create a 2D transition matrix, both dimension sizes equal to the number of SNPs
+        double transitionMatrix[][] = new double[tableSize][tableSize];
+        double probabilitiesSum = 0.0;
+
+        // Iterating through the elements to create the transition table
+        for (int row = 0 ; row < tableSize ; ++row) {
+            for (int column = 0 ; column < tableSize ; ++column) {
+                // Iterating through the ranking lists of the current pair of SNPs (2 outer for-loops)
+                for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
+                    // TODO Consider how to transform this to work for gradings as well (where bigger grading means better state)
+                    // If (for the corresponding ranking) the ranking of the first element is bigger than the second (aka is worse)
+                    if (SNPList.get(row).getSNPRank().get(i) > SNPList.get(column).getSNPRank().get(i)) {
+                        // Fill the transition matrix cell with the value 1/numberOfPrimaryRankings
+                        transitionMatrix[row][column] = 1.0/numberOfPrimaryRankings;
+                        // Since this condition is true for at least one of the rankings, no need to check the rest
+                        // Exit this loop
+                        break;
+                    }
+                    // If all rankings of the first elements are smaller or equal than the second one's (aka all rankings are at least equally good)
+                    // NOTE this way every pair comparison of an element with itself gets a probability of 0
+                    else {
+                        // Fill the corresponding cell of the transition matrix with a zero
+                        transitionMatrix[row][column] = 0;
+                    }
+                    // Add probability of each state transition to get the sum
+                    probabilitiesSum += transitionMatrix[row][column];
+
+                } // end of rankings for-loop
+            } // end of columns for-loop
+
+            // After one element is compared to all others, come back and change the (row, row) cell
+            // to the value 1 - the sum of the probabilities to change to another state when in current state
+            transitionMatrix[row][row] = 1 - probabilitiesSum;
+
+        } // end of rows for-loop
+    }
+
+
 }
