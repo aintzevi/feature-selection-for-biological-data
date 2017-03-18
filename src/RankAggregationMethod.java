@@ -111,6 +111,11 @@ public class RankAggregationMethod {
         } // end for - list of SNPs
     }
 
+    /**
+     * Applies the Markov Chain 1 Method (Lin, 2010)
+     * Calculates the probability of moving from an element of lower ranking to one of a higher ranking (pairwise comparison)
+     * At least one lower ranking is enough to set the probability higher to move to the other element/state
+     */
     public void MC1() {
         int tableSize = SNPList.size();
         // Create a 2D transition matrix, both dimension sizes equal to the number of SNPs
@@ -150,5 +155,52 @@ public class RankAggregationMethod {
         } // end of rows for-loop
     }
 
+    /**
+     * Applies the Markov Chain 1 Method (Lin, 2010)
+     * Calculates the probability of moving from an element of lower ranking to one of a higher ranking (pairwise comparison)
+     * The element must have a better ranking for at least half of the rankings to have a transition probability higher than zero
+     */
+    public void MC2() {
+        int tableSize = SNPList.size();
+        int counter = 0;
+        // Create a 2D transition matrix, both dimension sizes equal to the number of SNPs
+        double transitionMatrix[][] = new double[tableSize][tableSize];
+        double probabilitiesSum = 0.0;
 
+        // Iterating through the elements to create the transition table
+        for (int row = 0 ; row < tableSize ; ++row) {
+            for (int column = 0 ; column < tableSize ; ++column) {
+                // Iterating through the ranking lists of the current pair of SNPs (2 outer for-loops)
+                for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
+                    // TODO Consider how to transform this to work for gradings as well (where bigger grading means better state)
+                    // Count the number of rankings for which the first element has worse ranking than the second element
+
+                    // If (for the corresponding ranking) the ranking of the first element is bigger than the second (aka is worse)
+                    if (SNPList.get(row).getSNPRank().get(i) > SNPList.get(column).getSNPRank().get(i))
+                        // Increment the counter
+                        counter++;
+                } // end of rankings for-loop
+
+                // If the rank of the first element is bigger than the second for more than half the rankings
+                if (counter > numberOfPrimaryRankings/2) {
+                    //Fill the transition matrix cell with the value 1/numberOfPrimaryRankings
+                    transitionMatrix[row][column] = 1.0/numberOfPrimaryRankings;
+                }
+                else {
+                    // Fill the corresponding cell of the transition matrix with a zero
+                    transitionMatrix[row][column] = 0;
+                }
+                // Add probability of each state transition to get the sum
+                probabilitiesSum += transitionMatrix[row][column];
+
+                // Reset counter to zero
+                counter = 0;
+            } // end of columns for-loop
+
+            // After one element is compared to all others, come back and change the (row, row) cell
+            // to the value 1 - the sum of the probabilities to change to another state when in current state
+            transitionMatrix[row][row] = 1 - probabilitiesSum;
+
+        } // end of rows for-loop
+    }
 }
