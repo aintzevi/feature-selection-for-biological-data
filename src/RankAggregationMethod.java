@@ -11,11 +11,6 @@ public class RankAggregationMethod {
     private List<SNP> SNPList;
     private int numberOfPrimaryRankings;
 
-    public RankAggregationMethod() {
-        this.SNPList = new ArrayList<>();
-        numberOfPrimaryRankings = 3;
-    }
-
     public RankAggregationMethod(List<SNP> SNPList, int numberOfPrimaryRankings) {
         this.SNPList = SNPList;
         this.numberOfPrimaryRankings = numberOfPrimaryRankings;
@@ -26,8 +21,11 @@ public class RankAggregationMethod {
     /**
      * Aggregates SNP rankings using the median of them as the new ranking
      * Changes the SNP list inside every SNP of the class input list
+     * @param rankingParameter Parameter to choose if the ranking is based on the rank or the score of the SNPs.
+     *                         0 is for rank and 1 is for score
      */
-    public void MedianRank() {
+    // TODO add check when calling it -- rankingParameter can only be 0 or 1
+    public void Median(int rankingParameter) {
         // Temporary list to find median
         List<Double> tempList;
         // Temporary variable to save the median value
@@ -35,10 +33,18 @@ public class RankAggregationMethod {
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
             // Copy its list of rankings to a temporary list - Copies only first rankings (genetic rankings)
-            tempList = new ArrayList<>(currentSNP.getSNPRank().subList(0, numberOfPrimaryRankings));
+            if (rankingParameter == 0){
+                tempList = new ArrayList<>(currentSNP.getSNPRank().subList(0, numberOfPrimaryRankings));
 
-            // Sort list, lower to higher
-            Collections.sort(tempList);
+                // Sort list, lower to higher (rank here, 1 better than 2)
+                Collections.sort(tempList);
+            }
+            else {
+                tempList = new ArrayList<>(currentSNP.getSNPScore().subList(0, numberOfPrimaryRankings));
+
+                // Sort list higher to lower (scores here, 2 better than 1)
+                Collections.sort(tempList, Collections.reverseOrder());
+            }
 
             // Choose median
             // If the number of rankings is even
@@ -51,44 +57,65 @@ public class RankAggregationMethod {
                 median = tempList.get(numberOfPrimaryRankings/2);
             }
 
-            // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
-            currentSNP.addRank(numberOfPrimaryRankings, median);
+            // Adding the aggragation method result to rank or score, depending on the parameter
+            if (rankingParameter == 0)
+                // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.addRank(numberOfPrimaryRankings, median);
+
+            else
+                // Add the median to the SNP's score list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.addScore(numberOfPrimaryRankings, median);
         } // end for - list of SNPs
     }
 
     /**
      * Aggregates SNP rankings using the geometric mean formula to calculate the aggregated rank
      * Changes the SNP list inside every SNP of the class input list
+     * @param rankingParameter Parameter to choose if the ranking is based on the rank or the score of the SNPs.
+     *                         0 is for rank and 1 is for score
      */
-    public void GeometricMeanRank() {
+    public void GeometricMean(int rankingParameter) {
         // variables to help calculate geometric mean formula
-        double rankProduct = 1.0;
+        double product = 1.0;
         double geometricMean;
 
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
             // Read primary rankings
             for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
-                // Calculate the rankings product
-                rankProduct *= currentSNP.getSNPRank().get(i);
+                if (rankingParameter == 0) {
+                    // Calculate the rankings product
+                    product *= currentSNP.getSNPRank().get(i);
+                }
+                else {
+                    // Calculate the score product
+                    product *= currentSNP.getSNPScore().get(i);
+                }
             }
 
             // Calculate geometric mean
 
             // Geometric mean formula: value = L-root of product of L numbers
-            geometricMean = Math.pow(rankProduct, 1/numberOfPrimaryRankings);
+            geometricMean = Math.pow(product, 1/numberOfPrimaryRankings);
 
-            // Add geometric mean to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
-            currentSNP.getSNPRank().add(numberOfPrimaryRankings, geometricMean);
-
+            if (rankingParameter == 0) {
+                // Add geometric mean to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.getSNPRank().add(numberOfPrimaryRankings, geometricMean);
+            }
+            else {
+                // Add geometric mean to the SNP's score list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.getSNPScore().add(numberOfPrimaryRankings, geometricMean);
+            }
         } // end for - list of SNPs
     }
 
     /**
      * Aggregates SNP rankings using the p-norm formula (Lin, 2010) to calculate the aggregated rank
      * @param p power to which every ranking will be raised to. Double value. p = 1 turns this method to the arithmetic mean
+     * @param rankingParameter Parameter to choose if the ranking is based on the rank or the score of the SNPs.
+     *                         0 is for rank and 1 is for score
      */
-    public void pNormRank(Double p) {
+    public void pNormRank(Double p, int rankingParameter) {
         double sum = 0.0;
         double pNorm;
 
@@ -96,8 +123,15 @@ public class RankAggregationMethod {
         for (SNP currentSNP : SNPList) {
             // Read primary rankings
             for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
-                // Calculate the sum of (rankings power of p)
-                sum += Math.pow(currentSNP.getSNPRank().get(i), p);
+
+                if(rankingParameter == 0) {
+                    // Calculate the sum of (rankings power of p)
+                    sum += Math.pow(currentSNP.getSNPRank().get(i), p);
+                }
+                else {
+                    // Calculate the sum of (rankings power of p)
+                    sum += Math.pow(currentSNP.getSNPScore().get(i), p);
+                }
             }
 
             // Calculate p-norm
@@ -105,8 +139,14 @@ public class RankAggregationMethod {
             // p-norm formula (Lin, 2010): value = sum of (rankings power of p) divided by number of rankings
             pNorm = sum/numberOfPrimaryRankings;
 
-            // Add p-norm to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
-            currentSNP.getSNPRank().add(numberOfPrimaryRankings, pNorm);
+            if (rankingParameter == 0) {
+                // Add p-norm to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.getSNPRank().add(numberOfPrimaryRankings, pNorm);
+            }
+            else {
+                // Add p-norm to the SNP's score list, index next to the last primary ranking (numberOfPrimaryRankings)
+                currentSNP.getSNPScore().add(numberOfPrimaryRankings, pNorm);
+            }
 
         } // end for - list of SNPs
     }
@@ -127,7 +167,7 @@ public class RankAggregationMethod {
             for (int column = 0 ; column < tableSize ; ++column) {
                 // Iterating through the ranking lists of the current pair of SNPs (2 outer for-loops)
                 for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
-                    // TODO Consider how to transform this to work for gradings as well (where bigger grading means better state)
+                    // TODO Consider how to transform this to work for scores as well (where bigger score means better state)
                     // If (for the corresponding ranking) the ranking of the first element is bigger than the second (aka is worse)
                     if (SNPList.get(row).getSNPRank().get(i) > SNPList.get(column).getSNPRank().get(i)) {
                         // Fill the transition matrix cell with the value 1/numberOfPrimaryRankings
@@ -175,7 +215,7 @@ public class RankAggregationMethod {
             for (int column = 0 ; column < tableSize ; ++column) {
                 // Iterating through the ranking lists of the current pair of SNPs (2 outer for-loops)
                 for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
-                    // TODO Consider how to transform this to work for gradings as well (where bigger grading means better state)
+                    // TODO Consider how to transform this to work for scores as well (where bigger score means better state)
                     // Count the number of rankings for which the first element has worse ranking than the second element
 
                     // If (for the corresponding ranking) the ranking of the first element is bigger than the second (aka is worse)

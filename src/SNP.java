@@ -13,9 +13,9 @@ public class SNP {
     // Rank of SNP for a specific ranking system
     private List<Double> SNPRank;
     // Grade of the SNP (in case we use grading to aggregate, rather than just ranking)
-    private List<Double> SNPGrading;
+    private List<Double> SNPScore;
     /*
-    NOTED: Respective SNPRank and SNPGrading index refer to the results of one ranking system
+    NOTED: Respective SNPRank and SNPScore index refer to the results of one ranking system
     (index:0 (both lists) -> first ranking system, index:1 (both lists) -> second ranking system, etc.)
     */
 
@@ -23,12 +23,12 @@ public class SNP {
      * Constructs a SNP with its unique id, a list of its rank positions and a list of its gradings
      * @param SNPid Unique SNP id
      * @param SNPRank List of the rank this SNP has in different ranking systems
-     * @param SNPGrading List of the grading this SNP has in different ranking systems
+     * @param SNPScore List of the grading this SNP has in different ranking systems
      */
-    public SNP(int SNPid, List<Double> SNPRank, List<Double> SNPGrading) {
+    public SNP(int SNPid, List<Double> SNPRank, List<Double> SNPScore) {
         this.SNPid = SNPid;
         this.SNPRank = SNPRank;
-        this.SNPGrading = SNPGrading;
+        this.SNPScore = SNPScore;
     }
 
     // Getters and setters
@@ -66,19 +66,19 @@ public class SNP {
     }
 
     /**
-     * SNPGrading list contains the grading of this SNP for several ranking systems - indices respective to the SNPRank list
-     * @return SNPGrading list
+     * SNPScore list contains the grading of this SNP for several ranking systems - indices respective to the SNPRank list
+     * @return SNPScore list
      */
-    public List<Double> getSNPGrading() {
-        return SNPGrading;
+    public List<Double> getSNPScore() {
+        return SNPScore;
     }
 
     /**
      *
-     * @param SNPGrading List containing double values
+     * @param SNPScore List containing double values
      */
-    public void setSNPGrading(List<Double> SNPGrading) {
-        this.SNPGrading = SNPGrading;
+    public void setSNPScore(List<Double> SNPScore) {
+        this.SNPScore = SNPScore;
     }
 
     // Methods
@@ -97,8 +97,8 @@ public class SNP {
      * @param index position of the new grading in the list
      * @param grading SNP grading to be added to the list of gradings
      */
-    public void addGrading (int index, Double grading) {
-        this.getSNPGrading().add(index, grading);
+    public void addScore(int index, Double grading) {
+        this.getSNPScore().add(index, grading);
     }
 
 }
