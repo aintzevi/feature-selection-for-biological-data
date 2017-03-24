@@ -44,15 +44,15 @@ public class RankAggregationMethod {
             // If the number of rankings is even
             if (numberOfPrimaryRankings %2 == 0) {
                 // The median is the average value of the two central values
-                median = (tempList.get(numberOfPrimaryRankings - 1) + tempList.get(numberOfPrimaryRankings))/2.0;
+                median = (tempList.get(numberOfPrimaryRankings/2 - 1) + tempList.get(numberOfPrimaryRankings/2))/2.0;
             }
             else { // If the number of rankings is odd
                 // median is the central value of the list, whose index is the floor of the numberOfPrimaryRankings/2 value
-                median = tempList.get(numberOfPrimaryRankings /2);
+                median = tempList.get(numberOfPrimaryRankings/2);
             }
 
-            // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings + 1)
-            currentSNP.addRank(numberOfPrimaryRankings + 1, median);
+            // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+            currentSNP.addRank(numberOfPrimaryRankings, median);
         } // end for - list of SNPs
     }
 
@@ -78,8 +78,8 @@ public class RankAggregationMethod {
             // Geometric mean formula: value = L-root of product of L numbers
             geometricMean = Math.pow(rankProduct, 1/numberOfPrimaryRankings);
 
-            // Add geometric mean to the SNP's rank list, index next to the first aggregated rankink (numberOfPrimaryRankings + 2)
-            currentSNP.getSNPRank().add(numberOfPrimaryRankings + 2, geometricMean);
+            // Add geometric mean to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+            currentSNP.getSNPRank().add(numberOfPrimaryRankings, geometricMean);
 
         } // end for - list of SNPs
     }
@@ -105,8 +105,8 @@ public class RankAggregationMethod {
             // p-norm formula (Lin, 2010): value = sum of (rankings power of p) divided by number of rankings
             pNorm = sum/numberOfPrimaryRankings;
 
-            // Add p-norm to the SNP's rank list, index (numberOfPrimaryRankings + 3)
-            currentSNP.getSNPRank().add(numberOfPrimaryRankings + 3, pNorm);
+            // Add p-norm to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
+            currentSNP.getSNPRank().add(numberOfPrimaryRankings, pNorm);
 
         } // end for - list of SNPs
     }
