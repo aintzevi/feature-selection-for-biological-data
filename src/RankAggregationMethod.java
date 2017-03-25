@@ -32,36 +32,30 @@ public class RankAggregationMethod {
         Double median;
         // For every SNP in the input list
         for (SNP currentSNP : SNPList) {
-            // Copy its list of rankings to a temporary list - Copies only first rankings (genetic rankings)
-            if (rankingParameter == 0){
+            // Copy its list of primary rankings to a temporary list
+            if (rankingParameter == 0)
+                // sublist: [0, numberOfPrimaryRankings)
                 tempList = new ArrayList<>(currentSNP.getSNPRank().subList(0, numberOfPrimaryRankings));
-
-                // Sort list, lower to higher (rank here, 1 better than 2)
-                Collections.sort(tempList);
-            }
-            else {
+            else
                 tempList = new ArrayList<>(currentSNP.getSNPScore().subList(0, numberOfPrimaryRankings));
 
-                // Sort list higher to lower (scores here, 2 better than 1)
-                Collections.sort(tempList, Collections.reverseOrder());
-            }
+            // Sort list, lower to higher
+            Collections.sort(tempList);
 
-            // Choose median
+            // Calculate median
+
             // If the number of rankings is even
-            if (numberOfPrimaryRankings %2 == 0) {
+            if (numberOfPrimaryRankings %2 == 0)
                 // The median is the average value of the two central values
                 median = (tempList.get(numberOfPrimaryRankings/2 - 1) + tempList.get(numberOfPrimaryRankings/2))/2.0;
-            }
-            else { // If the number of rankings is odd
+            else // If the number of rankings is odd
                 // median is the central value of the list, whose index is the floor of the numberOfPrimaryRankings/2 value
                 median = tempList.get(numberOfPrimaryRankings/2);
-            }
 
-            // Adding the aggragation method result to rank or score, depending on the parameter
+            // Adding the aggregation method result to rank or score, depending on the parameter
             if (rankingParameter == 0)
                 // Add the median to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
                 currentSNP.addRank(numberOfPrimaryRankings, median);
-
             else
                 // Add the median to the SNP's score list, index next to the last primary ranking (numberOfPrimaryRankings)
                 currentSNP.addScore(numberOfPrimaryRankings, median);
@@ -124,30 +118,25 @@ public class RankAggregationMethod {
             // Read primary rankings
             for (int i = 0 ; i < numberOfPrimaryRankings ; ++i) {
 
-                if(rankingParameter == 0) {
+                if(rankingParameter == 0)
                     // Calculate the sum of (rankings power of p)
                     sum += Math.pow(currentSNP.getSNPRank().get(i), p);
-                }
-                else {
+                else
                     // Calculate the sum of (rankings power of p)
                     sum += Math.pow(currentSNP.getSNPScore().get(i), p);
-                }
-            }
+            } // end-for of primary rankings loop
 
             // Calculate p-norm
 
             // p-norm formula (Lin, 2010): value = sum of (rankings power of p) divided by number of rankings
             pNorm = sum/numberOfPrimaryRankings;
 
-            if (rankingParameter == 0) {
+            if (rankingParameter == 0)
                 // Add p-norm to the SNP's rank list, index next to the last primary ranking (numberOfPrimaryRankings)
                 currentSNP.getSNPRank().add(numberOfPrimaryRankings, pNorm);
-            }
-            else {
+            else
                 // Add p-norm to the SNP's score list, index next to the last primary ranking (numberOfPrimaryRankings)
                 currentSNP.getSNPScore().add(numberOfPrimaryRankings, pNorm);
-            }
-
         } // end for - list of SNPs
     }
 
