@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -7,15 +8,20 @@ import java.util.List;
  * Created by Katerina Intzevidou on 25-Feb-17.
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
-public class SNP {
+public class SNP implements Comparable<SNP> {
     // Unique id
     private int SNPid;
     // Rank of SNP for a specific ranking system
     private List<Double> SNPRank;
     // Grade of the SNP (in case we use grading to aggregate, rather than just ranking)
     private List<Double> SNPScore;
+    // Number of rankings that come from genetic filtering (NOTE: Must be the same for the SNPs in the same list)
+    private static int numberOfPrimaryRankings;
+
+    //TODO Handle not existing rank values
+
     /*
-    NOTED: Respective SNPRank and SNPScore index refer to the results of one ranking system
+    NOTE: Respective SNPRank and SNPScore index refer to the results of one ranking system
     (index:0 (both lists) -> first ranking system, index:1 (both lists) -> second ranking system, etc.)
     */
 
@@ -93,12 +99,51 @@ public class SNP {
     }
 
     /**
-     * Adds a new grading to the list with the SNP gradings, in a specific index
-     * @param index position of the new grading in the list
-     * @param grading SNP grading to be added to the list of gradings
+     * Adds a new score to the list with the SNP gradings, in a specific index
+     * @param index position of the new score in the list
+     * @param score SNP score to be added to the list of gradings
      */
-    public void addScore(int index, Double grading) {
-        this.getSNPScore().add(index, grading);
+    public void addScore(int index, Double score) {
+        this.getSNPScore().add(index, score);
     }
 
+    @Override
+    public int compareTo(SNP obj) {
+        // Compare according to SNP rank using a Comparator
+        return Comparators.RANK.compare(this, obj);
+    }
+
+    /*@Override
+    public int compareTo(SNP obj) {
+        // Compare according to SNP score using a Comparator
+        return Comparators.SCORE.compare(this, obj);
+    }*/
+
+    /**
+     * Comparators Class used to compare SNPs according to their rank (ascending sorting) and their score (descending sorting)
+     */
+    public static class Comparators {
+        /**
+         * Comparator to sort depending on the Rank of the SNPs
+         * Ascending order
+         */
+        public static Comparator<SNP> RANK = new Comparator<SNP>() {
+            @Override
+            public int compare(SNP obj1, SNP obj2) {
+                return obj1.getSNPRank().get(numberOfPrimaryRankings).compareTo(obj2.getSNPRank().get(numberOfPrimaryRankings));
+            }
+        };
+
+        /**
+         * Comparator to sort depending on the Score of the SNPs
+         * Descending order
+         */
+        public static Comparator<SNP> SCORE = new Comparator<SNP>() {
+            @Override
+            public int compare(SNP obj1, SNP obj2) {
+                // Reversing obj1 and obj2 for descending order
+                return obj2.getSNPScore().get(numberOfPrimaryRankings).compareTo(obj1.getSNPScore().get(numberOfPrimaryRankings));
+            }
+        };
+    }
 }
