@@ -22,7 +22,6 @@ public class SNP implements Comparable<SNP> {
 
     /*
     NOTE: Respective SNPRank and SNPScore index refer to the results of one ranking system
-    (index:0 (both lists) -> first ranking system, index:1 (both lists) -> second ranking system, etc.)
     */
 
     /**
@@ -30,11 +29,13 @@ public class SNP implements Comparable<SNP> {
      * @param SNPid Unique SNP id
      * @param SNPRank List of the rank this SNP has in different ranking systems
      * @param SNPScore List of the grading this SNP has in different ranking systems
+     * @param numberOfPrimaryRankings How many the rankings that come from genetic filtering are
      */
-    public SNP(int SNPid, List<Double> SNPRank, List<Double> SNPScore) {
+    public SNP(int SNPid, List<Double> SNPRank, List<Double> SNPScore, int numberOfPrimaryRankings) {
         this.SNPid = SNPid;
         this.SNPRank = SNPRank;
         this.SNPScore = SNPScore;
+        this.numberOfPrimaryRankings = numberOfPrimaryRankings;
     }
 
     // Getters and setters
@@ -85,6 +86,22 @@ public class SNP implements Comparable<SNP> {
      */
     public void setSNPScore(List<Double> SNPScore) {
         this.SNPScore = SNPScore;
+    }
+
+    /**
+     * numberOfPrimaryRankings is the number of rankings that come from genetic filtering
+     * @return numberOfPrimaryRankings positive integer
+     */
+    public static int getNumberOfPrimaryRankings() {
+        return numberOfPrimaryRankings;
+    }
+
+    /**
+     * @param numberOfPrimaryRankings Positive integer - number of rankings that come from genetic filtering
+     *                                // TODO maybe set it as a greater than 2 number
+     */
+    public static void setNumberOfPrimaryRankings(int numberOfPrimaryRankings) {
+        SNP.numberOfPrimaryRankings = numberOfPrimaryRankings;
     }
 
     // Methods
