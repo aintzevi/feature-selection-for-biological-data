@@ -365,4 +365,23 @@ public class RankAggregationMethod {
 
         // TODO Check for breaking rank ties with scores
     }
+
+    /**
+     * Function that transforms an MC transition probabilities matrix according to the formula
+     * P'(u -> v) = (1 - a)P(u -> v) + a/|S|, where a is a (preferably small) parameter and |S| the number of elements/rows of the matrix
+     * @param A The transition probabilities matrix, contains non-negative, double values
+     * @param a Parameter a of the formula, non-negative, double value (if equal to 0, then the matrix stays the same)
+     */
+    public void transformMCMatrix(Matrix A, Double a) {
+
+        int matrixSize = SNPList.size();
+        // Create a matrix with the parameter in every cell
+        Matrix B = new Matrix(matrixSize, matrixSize, a/matrixSize);
+
+        // First multiply the matrix elements with the value (1 - a)
+        A.timesEquals(1 - a);
+
+        // Then add to matrix A the matrix B (has the constant value a/|S|)
+        A.plusEquals(B);
+    }
 }
