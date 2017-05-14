@@ -1,5 +1,11 @@
 package preprocessing;
 
+import javafx.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Contains all required preprocessing.SNP information, that being the preprocessing.SNP unique id, it's rank for some specific ranking and its respective score
  *
@@ -9,19 +15,23 @@ package preprocessing;
 public class SNP /*implements Comparable<preprocessing.SNP> */{
     // Unique id
     private String SNPid;
-    // Rank of preprocessing.SNP for a specific ranking system
+    // Rank of SNP for a specific ranking system
     private Double rank;
-    // Score of preprocessing.SNP for a specific ranking system
+    // Score of SNP for a specific ranking system
     private Double score;
+    // Normalised score - range in [0.0, 1.0]
+    private Double normalizedScore;
+
 
     public SNP(){}
     /**
-     * Creates an preprocessing.SNP object with specific values for the SNPid, the rank and the score of the preprocessing.SNP
-     * @param SNPid is a string containing the unique name of the preprocessing.SNP
-     * @param rank is the rank of this preprocessing.SNP in a specific ranking system
-     * @param score is the score of this preprocessing.SNP in a specific ranking system
+     * Creates an SNP object with specific values for the SNPid, the rank and the score of the SNP
+     * @param SNPid is a string containing the unique name of the SNP
+     * @param rank is the rank of this SNP in a specific ranking system
+     * @param score is the score of this SNP in a specific ranking system
+     * @param normalizedScore is the normalized value of the score of this SNP, from its initial range to the [0.0, 1.0] range
      */
-    public SNP(String SNPid, Double rank, Double score) {
+    public SNP(String SNPid, Double rank, Double score, Double normalizedScore) {
         this.SNPid = SNPid;
         this.rank = rank;
         this.score = score;
@@ -50,6 +60,14 @@ public class SNP /*implements Comparable<preprocessing.SNP> */{
 
     public void setScore(Double score) {
         this.score = score;
+    }
+
+    public Double getNormalizedScore() {
+        return normalizedScore;
+    }
+
+    public void setNormalizedScore(Double normalizedScore) {
+        this.normalizedScore = normalizedScore;
     }
 
 }
