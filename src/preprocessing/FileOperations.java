@@ -168,6 +168,41 @@ public class FileOperations {
         }
     }
 
+    public void WriteToFile(List<SNP> SNPList, int parameter) {
+        // Create file with the specific filename
+        File outputFile = new File(outputFilename);
+        // Create buffered writer
+        BufferedWriter writer = null;
+        try {
+            // Connect the writer to the output file
+            writer = new BufferedWriter(new FileWriter(outputFile));
+
+            // Create map with the specific SNP list and the respective fields, based on the parameter
+            Map<String,Double> map = new LinkedHashMap<>(formatOutput(SNPList, parameter));
+
+            // Iterate through the map entries
+            for (Map.Entry<String, Double> entry : map.entrySet()) {
+                // Write the key - value pair in the file with format: key value
+                writer.write(entry.getKey() + " " + entry.getValue());
+                // Add a new line to the file, for the next entry to be written on next line
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Writer appending failed");
+            e.printStackTrace();
+        }
+        // Closing buffered writer
+        finally {
+            try {
+                if (writer != null)
+                    writer.close();
+            } catch (IOException e) {
+                System.out.println("Writer close problem");
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Creates the proper Pre processing output. That is a Map of pairs with the SNPid as the key and one of the other SNP fields as value,
      * depending on the parameter set by the user
@@ -179,7 +214,7 @@ public class FileOperations {
      *                  Rank is also used as default
      * @return a map with the ranking of the initial list with the form of (SNPid -> value[depends on parameter])
      */
-    public Map<String, Double> formatOutput(List<SNP> SNPList, int parameter) {
+    private Map<String, Double> formatOutput(List<SNP> SNPList, int parameter) {
 
         // Creating a linked hash map - output data structure
         Map<String, Double> outputSNPMap = new LinkedHashMap<>();
