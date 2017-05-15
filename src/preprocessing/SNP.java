@@ -1,18 +1,12 @@
 package preprocessing;
 
-import javafx.util.Pair;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Contains all required preprocessing.SNP information, that being the preprocessing.SNP unique id, it's rank for some specific ranking and its respective score
+ * Contains all required SNP information, that being the SNP unique id, it's rank for some specific ranking and its respective score
  *
  * Created by Katerina Intzevidou on 25-Feb-17.
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
-public class SNP /*implements Comparable<preprocessing.SNP> */{
+public class SNP {
     // Unique id
     private String SNPid;
     // Rank of SNP for a specific ranking system
@@ -22,8 +16,8 @@ public class SNP /*implements Comparable<preprocessing.SNP> */{
     // Normalised score - range in [0.0, 1.0]
     private Double normalizedScore;
 
+    public SNP() {}
 
-    public SNP(){}
     /**
      * Creates an SNP object with specific values for the SNPid, the rank and the score of the SNP
      * @param SNPid is a string containing the unique name of the SNP
@@ -69,5 +63,4 @@ public class SNP /*implements Comparable<preprocessing.SNP> */{
     public void setNormalizedScore(Double normalizedScore) {
         this.normalizedScore = normalizedScore;
     }
-
 }
