@@ -19,6 +19,10 @@ public class MC1 {
         this.inputListOfMaps = inputListOfMaps;
     }
 
+    /**
+     * Creates the transition probability matrix of the MC1 rank aggregation method [Lin, 2010], for a list of elements that are ranked
+     * using different ranking systems
+     */
     private void createTransitionProbabilityMatrix() {
         // Get the ids of all elements in the ranking systems
         InputListsTransformations ilt = new InputListsTransformations(inputListOfMaps);
