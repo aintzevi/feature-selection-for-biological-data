@@ -10,16 +10,6 @@ import java.util.Map;
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
 public class RankAggregationDataTransformation {
-    // List of the different rankings to aggregate
-    private static List<Map<String, Double>> inputListOfMaps;
-
-    /**
-     * Class constructor
-     * @param inputListOfMaps List containing maps with the rankings, key being a type string id and value a type double ranking
-     */
-    public RankAggregationDataTransformation(List<Map<String, Double>> inputListOfMaps) {
-        this.inputListOfMaps = inputListOfMaps;
-    }
 
     // Methods
 
