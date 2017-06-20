@@ -68,7 +68,4 @@ public class RankAggregationDataTransformation {
         }
         return rankingsOfAllElements;   // Return the map with the rankings
     }
-
-    // TODO Add methods to transform aggregation methods outputs as well
-    // TODO Check if those methods should be put in a rank aggregation methods super class
 }
