@@ -6,16 +6,25 @@ import java.util.List;
  * Created by Katerina Intzevidou on 15-May-17.
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
-public class BordaPNorm {
+public class BordaPNorm extends BordaMethod {
+
+    private Double p;
+
+    /**
+     * Class constructor
+     * @param p double value corresponding to the parameter that will be used for the aggregation
+     *               if p = 1.0, the formula is the arithmetic mean
+     */
+    public BordaPNorm(Double p) {
+        this.p = p;
+    }
 
     /**
      * Aggregates the numbers of the input list using p-Norm as its aggregation function
      * @param numbersToBeAggregated input list containing the numbers to be aggregated
-     * @param p double value corresponding to the parameter that will be used for the aggregation
-     *               if p = 1, the formula is the arithmetic mean
      * @return a double value containing the result of the aggregation
      */
-    private Double computeAggregation(List<Double> numbersToBeAggregated, Double p) {
+    protected Double computeAggregation(List<Double> numbersToBeAggregated) {
         // Helper variable
         double sum = 0.0;
 
