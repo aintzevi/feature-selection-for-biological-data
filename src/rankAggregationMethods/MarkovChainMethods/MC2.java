@@ -13,7 +13,7 @@ import java.util.Map;
 public class MC2 extends MarkovChain {
 
     /**
-     * Creates the transition probability matrix of the MC2 method
+     * Creates the transition probability matrix of the MC2 aggregation method [Lin, 2010]
      * @param listOfRankings list that contains maps with id (String) as key and the ranking (Double) as value.
      *                        Every one of the maps is one ranking
      * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
