@@ -1,7 +1,7 @@
 package rankAggregationMethods.MarkovChainMethods;
 
 import Jama.Matrix;
-import rankAggregationMethods.InputListsTransformations;
+import rankAggregationMethods.RankAggregationDataTransformation;
 
 import java.util.List;
 import java.util.Map;
@@ -10,33 +10,27 @@ import java.util.Map;
  * Created by Katerina Intzevidou on 15-May-17.
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
-public class MC3 {
-    // List of the different rankings to aggregate
-    private List<Map<String, Double>> inputListOfMaps;
-    private InputListsTransformations ilt;
-
-    public MC3(List<Map<String, Double>> inputListOfMaps) {
-        this.inputListOfMaps = inputListOfMaps;
-        ilt = new InputListsTransformations(inputListOfMaps);
-    }
+public class MC3 extends MarkovChain {
 
     /**
-     * Creates the transition probability matrix of the MC3 rank aggregation method [Lin, 2010], for a list of elements that are ranked
-     * using different ranking systems
+     * Creates the transition probability matrix of the MC3 aggregation method [Lin, 2010]
+     * @param listOfRankings list that contains maps with id (String) as key and the ranking (Double) as value.
+     *                        Every one of the maps is one ranking
+     * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
      */
-    private Matrix createTransitionProbabilityMatrix() {
+    public Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
         // Get the element id of all elements in the input maps/rankings
-        List<String> elementIds = ilt.getElementIds();
+        List<String> elementIds = RankAggregationDataTransformation.getElementIds(listOfRankings);
         // Save the size
         int tableSize = elementIds.size();
 
         // Create a 2D transition matrix, both dimension sizes equal to the number of SNPs
         Matrix transitionMatrix = new Matrix(tableSize, tableSize);
 
-        // Helper variables
+        // Define helper variables
         double probabilitiesSum = 0.0;
-        int majorityCounter = 0;    // counter to check if one element is better than the other in the majority of ranking systems
-        int commonRankingSystemsCounter = 0;
+        int majorityCounter = 0;    // counter to check the number of wins of element against the other at the ranking systems
+        int commonRankingSystemsCounter = 0;    // number of rankings in which both elements exist
 
         // FILLING THE TRANSITION PROBABILITY MATRIX
 
@@ -45,48 +39,30 @@ public class MC3 {
             // Iterate through the table list - column-wise
             for (int column = 0; column < tableSize; ++column) {
                 // Iterate through list of maps
-                for (Map<String, Double> currentMap : inputListOfMaps) {
-                    // If the current row element exists in it
-                    if (currentMap.containsKey(elementIds.get(row))) {
-                        // If the column element exists as well
-                        if (currentMap.containsKey(elementIds.get(column))) {
-                            // Increment the counter that stores the number of rankings in which both elements exist
-                            commonRankingSystemsCounter++;
+                for (Map<String, Double> currentMap : listOfRankings) {
+                    // If both current row and column elements exists in the current map/ranking
+                    if (currentMap.containsKey(elementIds.get(row)) && currentMap.containsKey(elementIds.get(column))) {
+                        commonRankingSystemsCounter++;      // Increment common rankings variable
 
-                            // If the column element has a value better than the row element
-                            // (therefore row element's value is bigger than the one of column element - rankings!)
-                            if (currentMap.get(elementIds.get(row)) > currentMap.get(elementIds.get(column)))
-                                // Increment the majorityCounter
-                                majorityCounter++;
-                        } // Column
-                        else
-                            continue;   // Start looking in the next map
-                    } // Row
-                    else
-                        continue;   // Start looking in the next map
-                    // Add current cell value to the helper probability sum variable
-                    probabilitiesSum += transitionMatrix.get(row, column);
+                        // If the column element has a value better than the row element - better = smaller - rankings!
+                        if (currentMap.get(elementIds.get(row)) > currentMap.get(elementIds.get(column)))
+                            majorityCounter++;      // Increment the majorityCounter
+                    }
                 } // End of list of Maps for-loop
 
-                // If the column element has better ranking in the majority of the ranking systems
-                if (majorityCounter > inputListOfMaps.size())
-                    // Add the 1/S value in this cell (S being the tablezize/ number of all elements between which we create the new ranking)
-                    transitionMatrix.set(row, column, majorityCounter / commonRankingSystemsCounter);
-                else
-                    // Set the cell value to 0
-                    transitionMatrix.set(row, column, 0);
+                transitionMatrix.set(row, column, (majorityCounter * 1.0) / (commonRankingSystemsCounter * tableSize));
+                probabilitiesSum += transitionMatrix.get(row, column);      // Add current cell value to the probability sum
 
-                // If probabilities sum is equal to zero - means there was no map where both elements existed
-                transitionMatrix.set(row, column, -1.0);      // Set cell value to -1.0 (Negative value to distinguish from 0s)
+                // Reset helper variables for next comparison
+                majorityCounter = 0;
+                commonRankingSystemsCounter = 0;
             } // End of columns for-loop
 
             // After one element is compared to all others, come back and change the (row, row) cell
-            // to the value 1 - the sum of the probabilities to change to another state when in current state
+            // to the value 1 - (sum of probabilities of moving to other states)
             transitionMatrix.set(row, row, 1 - probabilitiesSum);
-            // Resetting the helper variables to evaluate the next row
-            probabilitiesSum = 0.0;
-            majorityCounter = 0;
-            commonRankingSystemsCounter = 0;
+
+            probabilitiesSum = 0.0;     // Reset probability sum for next row
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
     }
