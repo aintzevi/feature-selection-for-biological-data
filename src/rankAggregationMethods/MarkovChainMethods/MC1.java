@@ -12,8 +12,10 @@ import java.util.Map;
  */
 public class MC1 extends MarkovChain{
     /**
-     * Creates the transition probability matrix of the MC1 rank aggregation method [Lin, 2010], for a list of elements that are ranked
-     * using different ranking systems
+     * Creates the transition probability matrix of the MC1 aggregation method [Lin, 2010]
+     * @param listOfRankings list that contains maps with id (String) as key and the ranking (Double) as value.
+     *                        Every one of the maps is one ranking
+     * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
      */
     public Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
         // Get the element id of all elements in the input maps/rankings
