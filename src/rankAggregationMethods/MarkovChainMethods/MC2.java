@@ -1,7 +1,7 @@
 package rankAggregationMethods.MarkovChainMethods;
 
 import Jama.Matrix;
-import rankAggregationMethods.InputListsTransformations;
+import rankAggregationMethods.RankAggregationDataTransformation;
 
 import java.util.List;
 import java.util.Map;
@@ -10,24 +10,17 @@ import java.util.Map;
  * Created by Katerina Intzevidou on 15-May-17.
  * Email: <aintzevi@csd.auth.gr> <intz.katerina@gmail.com>
  */
-public class MC2 {
-
-    // List of the different rankings to aggregate
-    private List<Map<String, Double>> inputListOfMaps;
-    private InputListsTransformations ilt;
-
-    public MC2(List<Map<String, Double>> inputListOfMaps) {
-        this.inputListOfMaps = inputListOfMaps;
-        ilt = new InputListsTransformations(inputListOfMaps);
-    }
+public class MC2 extends MarkovChain {
 
     /**
-     * Creates the transition probability matrix of the MC1 rank aggregation method [Lin, 2010], for a list of elements that are ranked
-     * using different ranking systems
+     * Creates the transition probability matrix of the MC2 method
+     * @param listOfRankings list that contains maps with id (String) as key and the ranking (Double) as value.
+     *                        Every one of the maps is one ranking
+     * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
      */
-    private Matrix createTransitionProbabilityMatrix() {
+    public Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
         // Get the element id of all elements in the input maps/rankings
-        List<String> elementIds = ilt.getElementIds();
+        List<String> elementIds = RankAggregationDataTransformation.getElementIds(listOfRankings);
         // Save the size
         int tableSize = elementIds.size();
 
@@ -45,44 +38,34 @@ public class MC2 {
             // Iterate through the table list - column-wise
             for(int column = 0 ; column < tableSize ; ++column) {
                 // Iterate through list of maps
-                for(Map<String, Double> currentMap : inputListOfMaps) {
-                    // If the current row element exists in it
-                    if(currentMap.containsKey(elementIds.get(row))){
-                        // If the column element exists as well
-                        if(currentMap.containsKey(elementIds.get(column))) {
-                            // If the column element has a value better than the row element
-                            // (therefore row element's value is bigger than the one of column element - rankings!)
-                            if(currentMap.get(elementIds.get(row)) > currentMap.get(elementIds.get(column)))
-                                // Increment the counter
-                                counter++;
-                        } // Column
-                        else
-                            continue;   // Start looking in the next map
-                    } // Row
-                    else
-                        continue;   // Start looking in the next map
-                    // Add current cell value to the helper probability sum variable
-                    probabilitiesSum += transitionMatrix.get(row, column);
+                for(Map<String, Double> currentMap : listOfRankings) {
+                    // If the current row and column elements exists in the current map
+                    if(currentMap.containsKey(elementIds.get(row)) && currentMap.containsKey(elementIds.get(column))){
+                        // If the column element has a value better than the row element
+                        // (therefore row element's value is bigger than the one of column element - rankings!)
+                        if(currentMap.get(elementIds.get(row)) > currentMap.get(elementIds.get(column)))
+                            counter++;      // Increment the wins counter
+                    }
                 } // End of list of Maps for-loop
 
-                // If the column element has better ranking in the majority of the ranking systems
-                if (counter > inputListOfMaps.size())
-                    // Add the 1/S value in this cell (S being the tablezize/ number of all elements between which we create the new ranking)
+                // If the column element has better ranking in the majority of the ranking systems (more than half)
+                if (counter >= Math.ceil(listOfRankings.size() / 2.0))
+                    // Add the 1/S value in this cell (S being the table size/ number of all elements between which we create the new ranking)
                     transitionMatrix.set(row, column,1.0/tableSize);
                 else
-                    // Set the cell value to 0
-                    transitionMatrix.set(row, column, 0);
+                    transitionMatrix.set(row, column, 0);       // Set the cell value to 0
 
-                // If probabilities sum is equal to zero - means there was no map where both elements existed
-                transitionMatrix.set(row, column, -1.0);      // Set cell value to -1.0 (Negative value to distinguish from 0s)
+                probabilitiesSum += transitionMatrix.get(row, column);      // Add current cell value to the helper sum variable
+
+                counter = 0;        // Reset counter for next column element comparisons
             } // End of columns for-loop
 
             // After one element is compared to all others, come back and change the (row, row) cell
             // to the value 1 - the sum of the probabilities to change to another state when in current state
             transitionMatrix.set(row, row, 1 - probabilitiesSum);
-            // Resetting the helper variables to evaluate the next row
-            probabilitiesSum = 0.0;
-            counter = 0;
+
+            probabilitiesSum = 0.0;     // Resetting probability sum for next row
+
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
     }
