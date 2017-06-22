@@ -18,7 +18,7 @@ public class MC3 extends MarkovChain {
      *                        Every one of the maps is one ranking
      * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
      */
-    public Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
+    protected Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
         // Get the element id of all elements in the input maps/rankings
         List<String> elementIds = RankAggregationDataTransformation.getElementIds(listOfRankings);
         // Save the size
@@ -65,5 +65,10 @@ public class MC3 extends MarkovChain {
             probabilitiesSum = 0.0;     // Reset probability sum for next row
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
+    }
+
+    @Override
+    public Map<String, Double> getMCMethodRanking(List<Map<String, Double>> listOfRankings, Double a) {
+        return null;
     }
 }
