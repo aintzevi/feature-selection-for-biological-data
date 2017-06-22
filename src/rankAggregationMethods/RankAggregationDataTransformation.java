@@ -1,9 +1,8 @@
 package rankAggregationMethods;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javafx.util.Pair;
+
+import java.util.*;
 
 /**
  * Created by Katerina Intzevidou on 22-May-17.
@@ -67,5 +66,37 @@ public class RankAggregationDataTransformation {
             rankingsOfAllElements.put(currentId, getRankingsOfAnElement(inputListOfMaps, currentId));
         }
         return rankingsOfAllElements;   // Return the map with the rankings
+    }
+
+    /**
+     * Creates and returns the sorted ranking result
+     * @param unsortedRankingMap Map containing entries of an element ID(Key - String) and its respective score (Value - Double) in a ranking
+     * @return A Map with the values of the input Map sorted
+     */
+    public static Map<String, Double> createSortedOutput (Map<String, Double> unsortedRankingMap) {
+        // Turn Map into list of pairs to do the sorting
+        List<Pair<String, Double>> listOfElementsAndRanks = new ArrayList<>();
+
+        for(Map.Entry<String, Double> currentEntry : unsortedRankingMap.entrySet()) {
+            listOfElementsAndRanks.add(new Pair<>(currentEntry.getKey(), currentEntry.getValue()));     // Add the map values into pairs list
+        }
+
+        // Sorting the list of pairs based on the value (rank, score)
+        Collections.sort(listOfElementsAndRanks, new Comparator<Pair<String, Double>>() {
+            @Override
+            public int compare(final Pair<String, Double> o1, final Pair<String, Double> o2) {
+                return Double.compare(o1.getValue(), o2.getValue());
+            }
+        });
+
+        // Map to save the final, sorted ranking
+        Map <String, Double> sortedRankingMap = new LinkedHashMap<>();
+
+        // Iterating through the list of pairs and adding the values in the map in the proper ascending order.
+        for (Pair<String, Double> currentPair : listOfElementsAndRanks) {
+            sortedRankingMap.put(currentPair.getKey(), currentPair.getValue());
+        }
+
+        return sortedRankingMap;
     }
 }
