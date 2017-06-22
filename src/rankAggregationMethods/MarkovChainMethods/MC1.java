@@ -1,10 +1,10 @@
 package rankAggregationMethods.MarkovChainMethods;
 
 import Jama.Matrix;
+import javafx.util.Pair;
 import rankAggregationMethods.RankAggregationDataTransformation;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Katerina Intzevidou on 15-May-17.
@@ -17,7 +17,7 @@ public class MC1 extends MarkovChain{
      *                        Every one of the maps is one ranking
      * @return Matrix containing Double values between 0.0 and 1.0 - corresponding to probabilities
      */
-    public Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
+    protected Matrix createTransitionProbabilityMatrix(List<Map<String, Double>> listOfRankings) {
         // Get the element id of all elements in the input maps/rankings
 
         /*--------------------NOTE Elements are set with insertion order--------------------*/
@@ -69,4 +69,5 @@ public class MC1 extends MarkovChain{
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
     }
+
 }
