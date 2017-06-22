@@ -20,7 +20,7 @@ public abstract class BordaMethod {
      *                       Every one of the maps is one ranking
      * @return Map containing the id as key and the aggregated result (new rank) as value
      */
-    public Map<String, Double> doTheAggregation (List<Map<String, Double>> listOfRankings) {
+    private Map<String, Double> doTheAggregation (List<Map<String, Double>> listOfRankings) {
         // Map to store the output ranking
         Map<String, Double> outputRanking = new LinkedHashMap<>();
 
@@ -41,16 +41,25 @@ public abstract class BordaMethod {
      * @param listOfRankings initial list containing maps that correspond to rankings
      * @return transformed data structure with ID as key and list of all rank values of this element as value
      */
-    private Map<String, List<Double>> transformRankingsForAggregation(List<Map<String, Double>> listOfRankings) {
+    protected static Map<String, List<Double>> transformRankingsForAggregation(List<Map<String, Double>> listOfRankings) {
         List<String> ids = RankAggregationDataTransformation.getElementIds(listOfRankings);
 
         return RankAggregationDataTransformation.getRankingsOfAllElements(listOfRankings, ids);
     }
 
     /**
-     * Computes the aggregation using a specific method
+     * Computes the aggregation using a method specific to each subclass
      * @param numbersToBeAggregated list containing the values to be aggregated
      * @return the result of the aggregation
      */
     protected abstract Double computeAggregation(List<Double> numbersToBeAggregated);
+
+    /**
+     * Gets the input list of rankings and returns the new, aggregated rank, based on one of the Borda Methods
+     * @param listOfRankings input list of rankings
+     * @return the new ranking created, sorted in ascending order
+     */
+    public Map<String, Double> getBordaMethodRanking(List<Map<String, Double>> listOfRankings) {
+        return RankAggregationDataTransformation.createSortedOutput(doTheAggregation(listOfRankings));
+    }
 }
