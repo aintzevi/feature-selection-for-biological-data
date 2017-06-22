@@ -1,7 +1,6 @@
 package rankAggregationMethods.MarkovChainMethods;
 
 import Jama.Matrix;
-import javafx.util.Pair;
 import rankAggregationMethods.RankAggregationDataTransformation;
 
 import java.util.*;
@@ -82,31 +81,12 @@ public abstract class MarkovChain {
         // Computing the stationary distribution of the probability matrix
         Matrix stationaryDistribution = stationaryDistribution(createTransitionProbabilityMatrix(listOfRankings));
 
-        // Using the list of element IDs and a list of pairs to sort the rankings
-        List<String> elementIds = RankAggregationDataTransformation.getElementIds(listOfRankings);
-        List<Pair<String, Double>> listOfElementsAndRanks = new ArrayList<>();
+        Map<String, Double> unsortedRanking = new LinkedHashMap<>();
 
-        // Creating a list of pairs with the ID (string) and its respective value at the stationary distribution (Double)
         for(int i = 0 ; i < stationaryDistribution.getRowDimension() ; ++i) {
-            listOfElementsAndRanks.add(new Pair<>(elementIds.get(i), stationaryDistribution.get(i,0)));
+            unsortedRanking.put(RankAggregationDataTransformation.getElementIds(listOfRankings).get(i), stationaryDistribution.get(i,0));
         }
 
-        // Sorting the list of pairs based on the value (rank, score)
-        Collections.sort(listOfElementsAndRanks, new Comparator<Pair<String, Double>>() {
-            @Override
-            public int compare(final Pair<String, Double> o1, final Pair<String, Double> o2) {
-                return Double.compare(o1.getValue(), o2.getValue());
-            }
-        });
-
-        // Map to save the final, sorted ranking
-        Map <String, Double> sortedRankingMap = new LinkedHashMap<>();
-
-        // Iterating through the list of pairs and adding the values in the map in the proper ascending order.
-        for (Pair<String, Double> currentPair : listOfElementsAndRanks) {
-            sortedRankingMap.put(currentPair.getKey(), currentPair.getValue());
-        }
-
-        return sortedRankingMap;        // Return the sorted ranking
+        return RankAggregationDataTransformation.createSortedOutput(unsortedRanking);       // Return the sorted ranking
     }
 }
