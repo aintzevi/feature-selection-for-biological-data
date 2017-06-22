@@ -1,6 +1,8 @@
 package preprocessing;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -107,7 +109,7 @@ public class FileOperations {
      * Reads the raw data from a list of Strings and turns them into SNP format (Check SNP doc)
      * @return List of SNPs
      */
-    private List<SNP> fileLinesListToSNPList() {
+    public List<SNP> fileLinesListToSNPList() {
         // List of clear input data
         List<String> fileLinesArrayList = new ArrayList<>(this.clearInputList());
         // Create SNP List
@@ -154,7 +156,9 @@ public class FileOperations {
             // Iterate through the input map
             for (Map.Entry<String, Double> entry : map.entrySet()) {
                 // Write the key - value pair in the file with format: key value
-                writer.write(entry.getKey() + " " + entry.getValue());
+                writer.write(entry.getKey() + " " + BigDecimal.valueOf(entry.getValue())
+                        .setScale(3, RoundingMode.HALF_UP)      // 3 digit precision at the score value
+                        .doubleValue());
                 // Add a new line to the file, for the next entry to be written on next line
                 writer.newLine();
             }
