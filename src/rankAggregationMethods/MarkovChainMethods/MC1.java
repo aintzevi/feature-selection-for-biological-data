@@ -1,7 +1,6 @@
 package rankAggregationMethods.MarkovChainMethods;
 
 import Jama.Matrix;
-import javafx.util.Pair;
 import rankAggregationMethods.RankAggregationDataTransformation;
 
 import java.util.*;
