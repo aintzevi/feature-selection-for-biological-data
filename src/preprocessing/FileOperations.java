@@ -32,6 +32,10 @@ public class FileOperations {
 
     // METHODS
 
+    public FileOperations() {
+        // Empty Constructor
+    }
+
     public FileOperations(String inputFilename, String outputFilename) {
         this.inputFilename = inputFilename;
         this.outputFilename = outputFilename;
@@ -146,8 +150,9 @@ public class FileOperations {
      * @param map is the structure containing the key value pairs to be written in file
      */
     public void writeToFile(Map<String, Double> map) {
-        // Create file with the specific filename
-        File outputFile = new File(outputFilename);
+        // Create file with the specific filename, using relative path, under the directory named "output"
+        File outputFile = new File(".\\output\\" + outputFilename);
+
         // Create buffered writer
         BufferedWriter writer = null;
         try {
@@ -156,12 +161,13 @@ public class FileOperations {
             // Iterate through the input map
             for (Map.Entry<String, Double> entry : map.entrySet()) {
                 // Write the key - value pair in the file with format: key value
-                writer.write(entry.getKey() + " " + BigDecimal.valueOf(entry.getValue())
-                        .setScale(3, RoundingMode.HALF_UP)      // 3 digit precision at the score value
-                        .doubleValue());
+                writer.write(entry.getKey().substring(3) /*+ " " + BigDecimal.valueOf(entry.getValue())
+                        .setScale(5, RoundingMode.HALF_UP)      // 5 digit precision at the score value
+                        .doubleValue()*/);
                 // Add a new line to the file, for the next entry to be written on next line
                 writer.newLine();
             }
+            writer.newLine();
         } catch (IOException e) {
             System.out.println("Writer appending failed");
             e.printStackTrace();
