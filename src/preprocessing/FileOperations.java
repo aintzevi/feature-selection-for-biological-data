@@ -1,8 +1,6 @@
 package preprocessing;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -36,6 +34,11 @@ public class FileOperations {
         // Empty Constructor
     }
 
+    /**
+     * Constructs a FileOperator object with given input and output filenames
+     * @param inputFilename (relative) path to input folder
+     * @param outputFilename (relative) path to output file
+     */
     public FileOperations(String inputFilename, String outputFilename) {
         this.inputFilename = inputFilename;
         this.outputFilename = outputFilename;
@@ -97,7 +100,7 @@ public class FileOperations {
      * Helper function, clears the raw input data, gets rid of extra lines that contain no information
      * @return a clear list of strings containing the SNP information
      */
-    public List<String> clearInputList() {
+    private List<String> clearInputList() {
         // List to be transformed -- Contains raw input data
         List<String> fileLinesArrayList = new ArrayList<>(this.readRawDataFromFile());
 
