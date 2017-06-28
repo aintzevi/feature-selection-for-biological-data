@@ -74,7 +74,7 @@ public class SNP {
      * Helper function. Normalizes the SNP score values to the range [0,1]
      * @param SNPList List containing the SNPs whose scores we want to normalize
      */
-    private static void normalizeSNPScoreValues(List<SNP> SNPList) {
+    protected static void normalizeSNPScoreValues(List<SNP> SNPList) {
         // Creating a temporary list that contains all the scores of the SNPs in the list
         List<Double> scoresList = new ArrayList<>();
         // Pair of values to store the range of the score values
@@ -149,7 +149,7 @@ public class SNP {
     }
 
     /**
-     * Creates the proper Pre processing output. That is a Map of pairs with the SNPid as the key and one of the other SNP fields as value,
+     * Creates the proper output. That is a Map of pairs with the SNPid as the key and one of the other SNP fields as value,
      * depending on the parameter set by the user
      * @param SNPList is the initial SNPList from which the map will be created
      * @param parameter is the parameter based on which the field to serve as value is chosen
