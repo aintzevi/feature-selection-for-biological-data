@@ -13,8 +13,8 @@ public class Evaluation {
     public static void main(String[] args) {
         // Object to handle the input directory
         File folder = new File("C:\\Users\\aintzevi\\Desktop\\proj\\Eval");
-        // Call function to compute evaluation for all the methods on various numbers of SNPs
-        computeEvaluationForAllValues(folder);
+
+        computeEvaluationPerMethod(folder);
     }
 
     /**
@@ -119,13 +119,13 @@ public class Evaluation {
     /**
      * Evaluates methods based on some files with information about the assignment of individuals in groups
      * @param folder Directory in which .csv files exist. Those files contain the assigned and actual group values for every individual
-     *               being examined
+     *               being examined - absolute path
      */
-    public static void computeEvaluationForAllValues (File folder) {
+    public static void computeEvaluationForAllValues (File folder, String outFile) {
         // Array with the contents of the input directory
         File[] listOfFiles = folder.listFiles();
 
-        File outputFile = new File(".\\output\\results.txt");       // Handle to output file
+        File outputFile = new File(outFile);       // Handle to output file
 
         // Create buffered writer
         BufferedWriter writer = null;
@@ -154,6 +154,22 @@ public class Evaluation {
                 System.out.println("Writer close problem");
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Computes the evaluation of each method for different number of SNPs
+     * @param folder directory containing subdirectories for each method. Each subdirectory contains csv files with the assignment results
+     *               for the 10, 20,..., 100 first SNPs
+     */
+    public static void computeEvaluationPerMethod(File folder) {
+        File[] listOfFiles = folder.listFiles();        // Files contained in initial folder
+
+        // Iterate through files/folders in the folder
+        for(File file : listOfFiles){
+            // Compute the evaluation for every subfolder -- every method
+            // Create an output file with the efficiency of each method for the different number of SNPs in a different file per method
+            computeEvaluationForAllValues(file.getAbsoluteFile(), ".\\output\\" + file.getName() + "Result.txt");
         }
     }
 }
