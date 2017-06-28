@@ -69,9 +69,4 @@ public class MC2 extends MarkovChain {
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
     }
-
-    @Override
-    public Map<String, Double> getMCMethodRanking(List<Map<String, Double>> listOfRankings, Double a) {
-        return null;
-    }
 }
