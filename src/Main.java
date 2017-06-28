@@ -18,7 +18,7 @@ public class Main {
         // Map to store the initial output of the pre processing stage (list that contains all initial rankings to be aggregated)
         List<Map<String, Double>> inputListOfMaps = new ArrayList<>();
         // List of the SNPs contained in the initial rankings
-        List<SNP> inputList = new ArrayList<>();
+        List<SNP> inputList;
 
         // Object to handle the input directory
         File folder = new File(".\\input\\");
