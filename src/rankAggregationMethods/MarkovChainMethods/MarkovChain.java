@@ -81,10 +81,17 @@ public abstract class MarkovChain {
         // Computing the stationary distribution of the probability matrix
         Matrix stationaryDistribution = stationaryDistribution(createTransitionProbabilityMatrix(listOfRankings));
 
+        Matrix result = new Matrix(stationaryDistribution.getRowDimension(), 1, 1);
+
+        // result of aggregation is 1(max value) - stationary distribution value for this element
+        result = result.minusEquals(stationaryDistribution);
+
+        // LinkedHashMaps retain the sequence in which the elements where put
         Map<String, Double> unsortedRanking = new LinkedHashMap<>();
 
+        // Putting the results of the ranking into a map, to later on sort it
         for(int i = 0 ; i < stationaryDistribution.getRowDimension() ; ++i) {
-            unsortedRanking.put(RankAggregationDataTransformation.getElementIds(listOfRankings).get(i), stationaryDistribution.get(i,0));
+            unsortedRanking.put(RankAggregationDataTransformation.getElementIds(listOfRankings).get(i), result.get(i,0));
         }
 
         return RankAggregationDataTransformation.createSortedOutput(unsortedRanking);       // Return the sorted ranking
