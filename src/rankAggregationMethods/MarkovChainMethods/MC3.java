@@ -50,7 +50,10 @@ public class MC3 extends MarkovChain {
                     }
                 } // End of list of Maps for-loop
 
-                transitionMatrix.set(row, column, (majorityCounter * 1.0) / (commonRankingSystemsCounter * tableSize));
+                if(commonRankingSystemsCounter != 0)
+                    transitionMatrix.set(row, column, (majorityCounter * 1.0) / (commonRankingSystemsCounter * tableSize));
+                else
+                    transitionMatrix.set(row, column, 0);
                 probabilitiesSum += transitionMatrix.get(row, column);      // Add current cell value to the probability sum
 
                 // Reset helper variables for next comparison
@@ -65,10 +68,5 @@ public class MC3 extends MarkovChain {
             probabilitiesSum = 0.0;     // Reset probability sum for next row
         } // End of rows for-loop
         return transitionMatrix;    // Return the created transition probability matrix
-    }
-
-    @Override
-    public Map<String, Double> getMCMethodRanking(List<Map<String, Double>> listOfRankings, Double a) {
-        return null;
     }
 }
