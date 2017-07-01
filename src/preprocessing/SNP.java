@@ -1,6 +1,7 @@
 package preprocessing;
 
 import javafx.util.Pair;
+import rankAggregationMethods.RankAggregationDataTransformation;
 
 import java.util.*;
 
@@ -103,6 +104,7 @@ public class SNP {
     protected static void normalizeAndReverseSNPScoreValues(List<SNP> SNPList) {
         // Normalize using helper function
         normalizeSNPScoreValues(SNPList);
+
         // Iterate through the SNP List
         for(SNP currentSNP: SNPList) {
             // Reverse the score of every normalized score, and replace it with the new value
@@ -154,8 +156,7 @@ public class SNP {
      * @param SNPList is the initial SNPList from which the map will be created
      * @param parameter is the parameter based on which the field to serve as value is chosen
      *                  0 is for SNP rank
-     *                  1 is for SNP Score
-     *                  2 is for normalized SNP Score
+     *                  1 is for normalized SNP Score
      *                  Rank is also used as default
      * @return a map with the ranking of the initial list with the form of (SNPid -> value[depends on parameter])
      */
@@ -173,16 +174,8 @@ public class SNP {
                     outputSNPMap.put(currentSNP.getSNPid(), currentSNP.getRank());
                 }
                 break;
-            // SNP score
-            case 1:
-                // Iterate through SNP list
-                for (SNP currentSNP : SNPList) {
-                    // Add SNP id and Score in output Map (this map keeps the insertion order)
-                    outputSNPMap.put(currentSNP.getSNPid(), currentSNP.getScore());
-                }
-                break;
             // Normalised score
-            case 2:
+            case 1:
                 // Iterate through SNP list
                 for (SNP currentSNP : SNPList) {
                     // Add SNP id and Rank in output Map (this map keeps the insertion order)
@@ -198,6 +191,6 @@ public class SNP {
                 }
                 break;
         }
-        return outputSNPMap;
+        return RankAggregationDataTransformation.createSortedOutput(outputSNPMap);      // Return sorted
     }
 }
