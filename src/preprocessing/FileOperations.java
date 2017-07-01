@@ -143,6 +143,7 @@ public class FileOperations {
                 SNPList.add(currentSNP);
             }
         }
+
         // Adding the normalized and reversed scores in every SNP of the SNPList
         SNP.normalizeAndReverseSNPScoreValues(SNPList);
         return SNPList;
