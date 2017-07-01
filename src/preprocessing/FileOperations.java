@@ -150,7 +150,7 @@ public class FileOperations {
     }
 
     /**
-     * Writing a ranking list in a file. Format key value, where key is a string and value a double value
+     * Writing a ranking list in a file. Format key value, in the sorted order (smaller to greater)
      * @param map is the structure containing the key value pairs to be written in file
      */
     public void writeToFile(Map<String, Double> map) {
