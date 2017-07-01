@@ -90,7 +90,7 @@ public class RankAggregationDataTransformation {
         });
 
         // Map to save the final, sorted ranking
-        Map <String, Double> sortedRankingMap = new LinkedHashMap<>();
+        Map <String, Double> sortedRankingMap = new LinkedHashMap<>();      // linked hash maps keep the insertion order
 
         // Iterating through the list of pairs and adding the values in the map in the proper ascending order.
         for (Pair<String, Double> currentPair : listOfElementsAndRanks) {
